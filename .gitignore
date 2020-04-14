@@ -17,6 +17,4 @@ vendor/
 *.DS_Store*
 .env*
 !.env.sample
-botx
-main
 .idea/
