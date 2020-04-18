@@ -31,7 +31,14 @@ func Config(enforce bool) {
 			helper.FatalError(err, "")
 		}
 	}
-	requiredEnv := []string{"DATABASE_URL", "DATABASE_NAME", "SLACK_CLIENT_ID", "SLACK_CLIENT_SECRET"}
+	requiredEnv := []string{
+		"DATABASE_URL",
+		"DATABASE_NAME",
+		"SLACK_CLIENT_ID",
+		"SLACK_CLIENT_SECRET",
+		"PRIVATE_KEY",
+		"PUBLIC_KEY",
+	}
 	var missingEnv string
 	for _, key := range requiredEnv {
 		if os.Getenv(key) == "" {

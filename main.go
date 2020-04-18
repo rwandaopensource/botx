@@ -18,6 +18,8 @@ func main() {
 	flag.BoolVar(&help, "h", false, "(shorthand) help")
 	flag.BoolVar(&verbose, "verbose", false, "run the program in verbose mode")
 	flag.BoolVar(&verbose, "v", false, "(shorthand) verbose")
+	flag.BoolVar(&key, "key", false, "generate new public and private key")
+	flag.BoolVar(&key, "k", false, "(shorthand) key")
 	flag.Parse()
 	if verbose {
 		os.Setenv("VERBOSE", "true")
@@ -44,6 +46,10 @@ func command() bool {
 		helper.Print(usage)
 		cmd = true
 	}
+	if key {
+		helper.PrintKey()
+		cmd = true
+	}
 	return cmd
 }
 
@@ -55,9 +61,12 @@ func closeOpenHandle() {
 type table string
 
 var (
-	drop  bool
-	dropT string
-	usage string = `
+	drop    bool
+	dropT   string
+	help    bool
+	verbose bool
+	key     bool
+	usage   string = `
 Usage: botx [options]
 
 Options:
@@ -65,9 +74,8 @@ Options:
 --drop-all: drop all tables, should be done before running tests,
             if parsed with --drop, only --drop-all will be executed
 -d, --drop: drop tables, defined after this flag (comma separated)
-            if parsed with --drop-all, only --drop-all only will be executed
+            if parsed with --drop-all, only --drop-all will be executed
 -v, --verbose: run the program in verbose mode
+-k, --key: generate new public and private key
 	`
-	help    bool
-	verbose bool
 )
