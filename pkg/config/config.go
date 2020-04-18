@@ -2,20 +2,18 @@ package config
 
 import (
 	"errors"
-	"log"
 	"os"
-	"strings"
 
 	env "github.com/joho/godotenv"
+	"github.com/rwandaopensource/botx/pkg/helper"
 )
 
 // ErrEnv error returned when one the variables are missing
 var ErrEnv error = errors.New("one or more of the environments are missing")
 
-// Env contains all necessary environment variables of this application
-var Env map[string]string = map[string]string{}
-
-func init() {
+// Config load and validate missing variables
+// if enforce is set to true it will exists the program when there is missing varibles
+func Config(enforce bool) {
 	var (
 		mode string = os.Getenv("GO_ENV")
 		file        = ".env"
@@ -28,25 +26,19 @@ func init() {
 	}
 	if err := env.Load(); err != nil {
 		if errors.Is(err, os.ErrNotExist) {
-			log.Println("environment file not found using os environment")
+			helper.Verbose("environment file not found; using os environment")
 		} else {
-			log.Fatalln(err)
+			helper.FatalError(err, "")
 		}
 	}
-	config()
-}
-
-// validate missing variables
-func config() {
-	Env["DATABASE_URL"] = os.Getenv("DATABASE_URL")
-	Env["DATABASE_NAME"] = os.Getenv("DATABASE_NAME")
+	requiredEnv := []string{"DATABASE_URL", "DATABASE_NAME", "SLACK_CLIENT_ID", "SLACK_CLIENT_SECRET"}
 	var missingEnv string
-	for key, value := range Env {
-		if value == "" {
+	for _, key := range requiredEnv {
+		if os.Getenv(key) == "" {
 			missingEnv = missingEnv + ", " + key
 		}
 	}
-	if missingEnv != "" {
-		log.Fatalln(ErrEnv, strings.Trim(missingEnv, ", "))
+	if missingEnv != "" && enforce {
+		helper.FatalError(ErrEnv, missingEnv)
 	}
 }

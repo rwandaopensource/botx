@@ -18,3 +18,5 @@ vendor/
 .env*
 !.env.sample
 .idea/
+main
+botx
