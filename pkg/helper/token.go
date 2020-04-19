@@ -5,15 +5,16 @@ import (
 	"encoding/hex"
 	"errors"
 	"os"
+	"strings"
 
 	"github.com/google/uuid"
 )
 
 var (
 	// PrivateKey is the private key
-	PrivateKey ed25519.PrivateKey = DecodeKey(os.Getenv("PRIVATE_KEY"))
+	PrivateKey ed25519.PrivateKey = MustDecodeKey(os.Getenv("PRIVATE_KEY"))
 	// PublicKey is the private key
-	PublicKey ed25519.PublicKey = DecodeKey(os.Getenv("PUBLIC_KEY"))
+	PublicKey ed25519.PublicKey = MustDecodeKey(os.Getenv("PUBLIC_KEY"))
 )
 
 // GenerateKey generate new private and public key
@@ -45,8 +46,15 @@ func EncodeKey(key []byte) string {
 }
 
 // DecodeKey decode string key into bytes
-func DecodeKey(key string) []byte {
-	d, _ := hex.DecodeString(key)
+func DecodeKey(key string) (d []byte, err error) {
+	d, err = hex.DecodeString(key)
+	return
+}
+
+// MustDecodeKey decode key or panic
+func MustDecodeKey(key string) []byte {
+	d, err := hex.DecodeString(key)
+	PanicError(err, "")
 	return d
 }
 
@@ -58,9 +66,15 @@ func PrintKey() {
 	Print("public key: ", EncodeKey(priv))
 }
 
-// Token generate new signed token with private key
-func Token() (id uuid.UUID, signed []byte, err error) {
-	id = uuid.New()
-	signed, err = Sign(PrivateKey, id[:])
+// ClientIDAndSecretKey generate new signed client and secret key
+func ClientIDAndSecretKey(prv ed25519.PrivateKey) (ID string, secret []byte, err error) {
+	defer func() {
+		if e := recover(); e != nil {
+			err = e.(error)
+		}
+		return
+	}()
+	ID = strings.Replace(uuid.New().String(), "-", "", -1)
+	secret, err = Sign(prv, []byte(ID))
 	return
 }

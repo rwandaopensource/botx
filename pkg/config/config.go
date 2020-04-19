@@ -18,6 +18,8 @@ func Config(enforce bool) {
 		mode string = os.Getenv("GO_ENV")
 		file        = ".env"
 	)
+	// if you want to enforce the environment variables don't run test with GO_ENV
+	enforce = mode == "test"
 	switch mode {
 	case "development", "production", "test":
 		file += ("." + mode)
