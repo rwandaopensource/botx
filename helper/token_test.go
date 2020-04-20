@@ -5,7 +5,7 @@ import (
 	"crypto/ed25519"
 	"testing"
 
-	"github.com/rwandaopensource/botx/pkg/helper"
+	"github.com/rwandaopensource/botx/helper"
 )
 
 func TestED25519PublicAndPrivate(t *testing.T) {

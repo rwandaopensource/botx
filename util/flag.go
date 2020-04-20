@@ -4,8 +4,8 @@ import (
 	"flag"
 	"strings"
 
-	"github.com/rwandaopensource/botx/pkg/database"
-	"github.com/rwandaopensource/botx/pkg/helper"
+	"github.com/rwandaopensource/botx/database"
+	"github.com/rwandaopensource/botx/helper"
 )
 
 // Command parse and run command line command

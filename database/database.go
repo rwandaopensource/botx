@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/rwandaopensource/botx/pkg/config"
-	"github.com/rwandaopensource/botx/pkg/helper"
+	"github.com/rwandaopensource/botx/config"
+	"github.com/rwandaopensource/botx/helper"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -35,7 +35,6 @@ func InitDB() {
 	opts.SetRetryReads(true)
 	opts.SetRetryWrites(true)
 	opts.SetSocketTimeout(time.Second * 5)
-	opts.SetMaxConnIdleTime(time.Second * 5)
 	if opts.Validate() != nil {
 		helper.FatalError(errDBOptions, "")
 	}
@@ -48,6 +47,9 @@ func InitDB() {
 	if DB = Client.Database(dbName); DB != nil {
 		helper.Verbose("db connected ✅")
 	}
+	// Initializing tables
+	UserModel = DB.Collection("users")
+	WorkspaceModel = DB.Collection("workspaces")
 }
 
 // Drop will drop all tables, better be done before running tests
@@ -72,14 +74,21 @@ func DropSome(t []string) error {
 	return nil
 }
 
-// CloseDB releases connection open by database
-func CloseDB() {
+// Close releases connection opened by database
+func Close() {
 	err := Client.Disconnect(context.TODO())
 	helper.FatalError(err, "")
 }
 
-// Tables have all needed tables to run this app.
+// Tables all tables name
 var Tables []string = []string{"users"}
 
+/**
+  the following section define all tables
+**/
+
 // UserModel represent users table
-var UserModel = DB.Collection("users")
+var UserModel *mongo.Collection
+
+// WorkspaceModel reposents workspace table
+var WorkspaceModel *mongo.Collection

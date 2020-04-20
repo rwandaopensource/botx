@@ -5,7 +5,7 @@ import (
 	"os"
 
 	env "github.com/joho/godotenv"
-	"github.com/rwandaopensource/botx/pkg/helper"
+	"github.com/rwandaopensource/botx/helper"
 )
 
 // ErrEnv error returned when one the variables are missing
@@ -40,6 +40,7 @@ func Config(enforce bool) {
 		"SLACK_CLIENT_SECRET",
 		"PRIVATE_KEY",
 		"PUBLIC_KEY",
+		"SLACK_SIGNING_SECRET",
 	}
 	var missingEnv string
 	for _, key := range requiredEnv {

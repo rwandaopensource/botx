@@ -5,24 +5,25 @@ import (
 	"os"
 
 	"github.com/gorilla/mux"
+	"github.com/rwandaopensource/botx/controller"
 )
 
-// Router the
-func Router() *mux.Router {
+// NewRouter ...
+func NewRouter() *mux.Router {
 	var origin = os.Getenv("ORIGIN")
 	if origin == "" {
 		origin = "*"
 	}
 
-	r := mux.NewRouter()
+	rt := mux.NewRouter()
 
 	// HOME ROUTE == PONG
-	r.HandleFunc("/", func(rw http.ResponseWriter, _ *http.Request) {
+	rt.HandleFunc("/", func(rw http.ResponseWriter, _ *http.Request) {
 		rw.Write([]byte("PONG"))
 	}).Methods(http.MethodGet, http.MethodPost)
 
 	// OPTIONS request
-	r.Methods(http.MethodOptions).HandlerFunc(func(rw http.ResponseWriter, _ *http.Request) {
+	rt.Methods(http.MethodOptions).HandlerFunc(func(rw http.ResponseWriter, _ *http.Request) {
 		rw.Header().Set("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE")
 		rw.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 		rw.Header().Set("Access-Control-Allow-Origin", origin)
@@ -30,9 +31,11 @@ func Router() *mux.Router {
 		rw.WriteHeader(http.StatusNoContent)
 	})
 
-	r.HandleFunc("*", func(rw http.ResponseWriter, _ *http.Request) {
-		rw.WriteHeader(http.StatusNotFound)
-	}).Methods(http.MethodGet, http.MethodPost)
+	rt.HandleFunc("/install", controller.Install)
 
-	return r
+	rt.HandleFunc("*", func(rw http.ResponseWriter, _ *http.Request) {
+		rw.WriteHeader(http.StatusNotFound)
+	})
+
+	return rt
 }

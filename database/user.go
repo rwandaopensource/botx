@@ -1,28 +1,27 @@
 package database
 
 import (
+	"context"
 	"errors"
+	"time"
 
-	"github.com/rwandaopensource/botx/pkg/helper"
+	"github.com/rwandaopensource/botx/helper"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // User represent a user
 type User struct {
-	// ClientID is the id signed to the user
-	ClientID string
-	// ClientSecret is the secret signed to the user
-	ClientSecret string
-	// TeamID slack workspace id
-
+	CreatedAt    time.Duration `json:"created_at"`
+	UpdatedAt    time.Duration `json:"updated_at"`
+	ClientID     string        `json:"client_id"`
+	ClientSecret string        `json:"client_secret"`
+	TeamID       string        `json:"team_id"`
 }
 
 // ReadUser read a single user
 func ReadUser(clientID string) (*User, error) {
-	ctx, cancel := helper.ReadRecordCtx()
-	defer cancel()
-	res := UserModel.FindOne(ctx, bson.M{"clientId": clientID}, nil)
+	res := UserModel.FindOne(context.TODO(), bson.M{"clientId": clientID}, nil)
 	err := res.Err()
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		return nil, nil

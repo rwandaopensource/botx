@@ -7,27 +7,31 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/rwandaopensource/botx/pkg/database"
-	"github.com/rwandaopensource/botx/pkg/helper"
-	"github.com/rwandaopensource/botx/pkg/route"
-	"github.com/rwandaopensource/botx/pkg/util"
+	"github.com/rwandaopensource/botx/database"
+	"github.com/rwandaopensource/botx/helper"
+	"github.com/rwandaopensource/botx/route"
+	"github.com/rwandaopensource/botx/util"
 )
 
 func main() {
 
-	defer database.CloseDB()
+	defer database.Close()
 	if util.Command() {
 		return
 	}
 
+	ADDR := os.Getenv("PORT")
+	if ADDR == "" {
+		ADDR = ":8080"
+	}
 	s := &http.Server{
-		Addr:           route.ADDR,
-		Handler:        route.Router(),
+		Addr:           ADDR,
+		Handler:        route.NewRouter(),
 		ReadTimeout:    20 * time.Second,
 		WriteTimeout:   20 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
-	helper.Print("starting server", route.ADDR)
+	helper.Print("starting server", ADDR)
 
 	go func() {
 		helper.FatalError(s.ListenAndServe(), "")
