@@ -49,5 +49,4 @@ func TestClientAndSecretkey(t *testing.T) {
 			helper.TestError(t, err)
 		}
 	}
-	helper.TestLog(t, len(clientSecret), len(helper.EncodeKey(clientSecret)))
 }
