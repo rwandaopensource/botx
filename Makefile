@@ -8,7 +8,7 @@ fmt:
 	gofmt -w . || go fmt -w .
 
 test:
-	go test -v -race ./...
+	go test -v -race -coverprofile=coverage.coverprofile -covermode=atomic -tags integration ./...
 
 build:
 	go build -o bin/main main.go
