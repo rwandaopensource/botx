@@ -12,9 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go: ['1.13', '1.14']
-    env:
-      GOFLAGS: -mod=readonly
+        go: ['1.14']
 
     steps:
       - name: Set up Go
@@ -29,4 +27,4 @@ jobs:
       - name: Run tests
         env:
           GO_ENV: test
-        run: go test -v -race -coverprofile=coverage.coverprofile -covermode=atomic -tags integration ./...
+        run: go test -v -race
